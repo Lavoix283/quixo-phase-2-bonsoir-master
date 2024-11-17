@@ -34,14 +34,8 @@ class Plateau:
         return deepcopy(self.plateau)
 
     def __str__(self):
-        """Retourne une représentation en chaîne de caractères du plateau
+        
 
-        Déplacer le code de votre fonction formater_plateau ici et ajuster le en conséquence.
-
-        Returns:
-            str: Une représentation en chaîne de caractères du plateau.
-        """
-        pass
 
     def __getitem__(self, position):
         """Retourne la valeur à la position donnée
