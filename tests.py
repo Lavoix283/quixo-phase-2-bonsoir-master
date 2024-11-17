@@ -8,6 +8,7 @@ from quixo import Quixo
 
 
 def test_formater_le_damier_pour_une_nouvelle_partie():
+    """Teste le formatage du plateau pour une nouvelle partie."""
     plateau = Plateau()
 
     attendu = (
@@ -31,6 +32,7 @@ def test_formater_le_damier_pour_une_nouvelle_partie():
 
 
 def test_formater_le_jeu_pour_une_nouvelle_partie():
+    """Teste le formatage du jeu pour une nouvelle partie avec des joueurs spécifiés."""
     joueurs = ["josmi42", "automate"]
 
     quixo = Quixo(joueurs)
@@ -59,6 +61,7 @@ def test_formater_le_jeu_pour_une_nouvelle_partie():
 
 
 def test_formater_le_jeu_pour_une_partie_avancée():
+    """Teste le formatage du jeu pour une partie avancée avec des pions placés."""
     joueurs = ["josmi42", "automate"]
     plateau = [
         [" ", " ", "X", " ", " "],

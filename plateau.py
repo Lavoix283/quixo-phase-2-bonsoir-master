@@ -39,8 +39,8 @@ class Plateau:
         return deepcopy(self.plateau)
 
     def __str__(self):
+        """Retourne une représentation du plateau sous forme de chaîne de caractères."""
         lignes = []
-        lignes.append("   -------------------")
 
         for i in range(5):
             ligne = f"{i + 1} | " + " | ".join(self.plateau[i]) + " |"
@@ -50,7 +50,7 @@ class Plateau:
                 lignes.append("  |---|---|---|---|---|")
 
         lignes.append("   -------------------")
-        lignes.append("    1   2   3   4   5   ")
+        lignes.append("  | 1   2   3   4   5 |")
 
         return "\n".join(lignes)
 
@@ -219,3 +219,5 @@ class Plateau:
             self[i, y - 1] = self[i - 1, y - 1]
 
         self[0, y - 1] = cube
+
+plateau = Plateau()
