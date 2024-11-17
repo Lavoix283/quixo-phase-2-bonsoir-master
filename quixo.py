@@ -11,11 +11,16 @@ Functions:
 import argparse
 
 from quixo_error import QuixoError
-
 from plateau import Plateau
 
 
 class Quixo:
+    """Classe principale du jeu Quixo.
+
+    Cette classe représente une partie de Quixo avec les joueurs et le plateau.
+    Elle fournit des méthodes pour afficher l'état du jeu, déplacer un pion, et choisir un coup.
+    """
+
     def __init__(self, joueurs, plateau=None) -> None:
         """Constructeur de la classe Quixo
 
@@ -45,8 +50,12 @@ class Quixo:
         }
 
     def __str__(self):
-        joueur_X, joueur_O = self.joueurs
-        legende = f"Légende:\n   X={joueur_X}\n   O={joueur_O}"
+        """Renvoie une représentation sous forme de chaîne de caractères du jeu.
+
+        Retourne l'état actuel du jeu sous forme lisible avec la légende des joueurs et l'état du plateau.
+        """
+        joueur_x, joueur_o = self.joueurs
+        legende = f"Légende:\n   X={joueur_x}\n   O={joueur_o}"
 
         lignes = []
         lignes.append("   -------------------")
@@ -63,8 +72,17 @@ class Quixo:
 
         return f"{legende}\n{''.join(lignes)}"
 
-
     def déplacer_pion(self, pion, origine, direction):
+        """Déplace un pion sur le plateau.
+
+        Args:
+            pion (str): Le symbole du pion ('X' ou 'O').
+            origine (tuple): La position d'origine du pion (x, y).
+            direction (str): La direction du déplacement ('haut', 'bas', 'gauche', 'droite').
+
+        Raises:
+            QuixoError: Si le pion ou la direction est invalide ou si la position est hors du plateau.
+        """
         if pion not in ["X", "O"]:
             raise QuixoError(f"Le pion '{pion}' n'est pas valide. Il doit être 'X' ou 'O'.")
 
@@ -77,8 +95,18 @@ class Quixo:
 
         self.plateau.insérer_un_cube(pion, origine, direction)
 
+    def choisir_un_coup(self):
+        """Demande à l'utilisateur de choisir un coup valide.
 
-    def choisir_un_coup():
+        La méthode demande à l'utilisateur de saisir une position et une direction,
+        et vérifie la validité de la saisie avant de retourner le coup choisi.
+
+        Returns:
+            tuple: La position d'origine et la direction du coup.
+
+        Raises:
+            QuixoError: Si la position ou la direction est invalide.
+        """
         while True:
             try:
                 position_str = input("Donnez la position d'origine du cube (x,y) : ")
@@ -101,10 +129,14 @@ class Quixo:
 
 
 def interpréter_la_commande():
+    """Crée un interpréteur de commande pour gérer les arguments de la ligne de commande.
+
+    Returns:
+        Namespace: Les arguments de la commande parsés.
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument('idul', type=str, help="L'idul du joueur")
-
     parser.add_argument('--parties', action='store_true', help="Indique si on doit afficher les parties en cours")
 
     return parser.parse_args()

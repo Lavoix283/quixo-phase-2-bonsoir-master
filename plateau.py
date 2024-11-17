@@ -219,5 +219,3 @@ class Plateau:
             self[i, y - 1] = self[i - 1, y - 1]
 
         self[0, y - 1] = cube
-
-plateau = Plateau()
