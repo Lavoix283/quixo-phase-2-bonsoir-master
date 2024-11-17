@@ -5,11 +5,16 @@ Classes:
 """
 
 from copy import deepcopy
-
 from quixo_error import QuixoError
 
 
 class Plateau:
+    """
+    Classe représentant le plateau de jeu Quixo.
+    
+    Elle permet de manipuler le plateau en insérant des cubes, récupérant l'état du plateau et vérifiant les positions des cubes.
+    """
+
     def __init__(self, plateau=None):
         """Constructeur de la classe Plateau
 
@@ -48,9 +53,19 @@ class Plateau:
         lignes.append("    1   2   3   4   5   ")
 
         return "\n".join(lignes)
-    
 
     def __getitem__(self, position):
+        """Récupère la valeur à la position spécifiée sur le plateau.
+
+        Args:
+            position (tuple): Coordonnées (x, y) de la position sur le plateau.
+
+        Returns:
+            str: La valeur à la position spécifiée sur le plateau.
+
+        Raises:
+            QuixoError: Si les coordonnées sont en dehors de la plage valide.
+        """
         x, y = position
 
         if not (1 <= x <= 5 and 1 <= y <= 5):
@@ -58,8 +73,16 @@ class Plateau:
 
         return self.plateau[x - 1][y - 1]
 
-
     def __setitem__(self, position, valeur):
+        """Modifie la valeur à la position spécifiée sur le plateau.
+
+        Args:
+            position (tuple): Coordonnées (x, y) de la position sur le plateau.
+            valeur (str): La nouvelle valeur à insérer.
+
+        Raises:
+            QuixoError: Si les coordonnées sont en dehors de la plage valide ou la valeur est invalide.
+        """
         x, y = position
 
         if not (1 <= x <= 5 and 1 <= y <= 5):
@@ -70,8 +93,18 @@ class Plateau:
 
         self.plateau[x - 1][y - 1] = valeur
 
-
     def générer_le_plateau(self, plateau):
+        """Génère le plateau en vérifiant la validité de sa structure.
+
+        Args:
+            plateau (list[list[str]] or None): La représentation du plateau ou None.
+
+        Returns:
+            list[list[str]]: Le plateau généré ou un plateau vide.
+
+        Raises:
+            QuixoError: Si le format du plateau est invalide.
+        """
         if plateau is None:
             return [[" " for _ in range(5)] for _ in range(5)]
 
@@ -85,8 +118,17 @@ class Plateau:
 
         return plateau
 
-
     def insérer_un_cube(self, cube, origine, direction):
+        """Insère un cube sur le plateau selon la direction donnée.
+
+        Args:
+            cube (str): Le cube à insérer, soit "X" soit "O".
+            origine (tuple): Les coordonnées (x, y) du cube à insérer.
+            direction (str): La direction de l'insertion, soit "haut", "bas", "gauche" ou "droite".
+
+        Raises:
+            QuixoError: Si la direction est invalide.
+        """
         if cube not in ["X", "O"]:
             raise QuixoError("Le cube à insérer ne peut pas être vide.")
 
@@ -102,8 +144,16 @@ class Plateau:
         elif direction == "droite":
             self.insérer_par_la_droite(cube, origine)
 
-
     def insérer_par_le_bas(self, cube, origine):
+        """Insère un cube dans le plateau en partant du bas.
+
+        Args:
+            cube (str): Le cube à insérer.
+            origine (tuple): Les coordonnées (x, y) de l'emplacement du cube.
+
+        Raises:
+            QuixoError: Si les coordonnées sont en dehors de la plage valide.
+        """
         x, y = origine
         if x < 1 or x > 5 or y < 1 or y > 5:
             raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
@@ -113,8 +163,16 @@ class Plateau:
 
         self[x - 1, 0] = cube
 
-
     def insérer_par_le_haut(self, cube, origine):
+        """Insère un cube dans le plateau en partant du haut.
+
+        Args:
+            cube (str): Le cube à insérer.
+            origine (tuple): Les coordonnées (x, y) de l'emplacement du cube.
+
+        Raises:
+            QuixoError: Si les coordonnées sont en dehors de la plage valide.
+        """
         x, y = origine
         if x < 1 or x > 5 or y < 1 or y > 5:
             raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
@@ -124,8 +182,16 @@ class Plateau:
 
         self[x - 1, 4] = cube
 
-
     def insérer_par_la_gauche(self, cube, origine):
+        """Insère un cube dans le plateau en partant de la gauche.
+
+        Args:
+            cube (str): Le cube à insérer.
+            origine (tuple): Les coordonnées (x, y) de l'emplacement du cube.
+
+        Raises:
+            QuixoError: Si les coordonnées sont en dehors de la plage valide.
+        """
         x, y = origine
         if x < 1 or x > 5 or y < 1 or y > 5:
             raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
@@ -135,8 +201,16 @@ class Plateau:
 
         self[4, y - 1] = cube
 
-
     def insérer_par_la_droite(self, cube, origine):
+        """Insère un cube dans la colonne spécifiée de droite à gauche dans le plateau de jeu.
+
+        Args:
+            cube (str): Le cube à insérer.
+            origine (tuple): Les coordonnées (x, y) de l'emplacement où le cube doit être inséré.
+
+        Raises:
+            QuixoError: Si les coordonnées (x, y) ne sont pas dans la plage valide [1, 5].
+        """
         x, y = origine
         if x < 1 or x > 5 or y < 1 or y > 5:
             raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
