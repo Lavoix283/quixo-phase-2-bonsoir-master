@@ -1,80 +1,101 @@
-"""Module d'API du jeu Quixo
-
-Attributes:
-    URL (str): Constante représentant le début de l'url du serveur de jeu.
-
-Functions:
-    * initialiser_partie - Créer une nouvelle partie et retourne l'état de cette dernière.
-    * jouer_un_coup - Exécute un coup et retourne le nouvel état de jeu.
-    * récupérer_une_partie - Retrouver l'état d'une partie spécifique.
-"""
-
 import requests
+
 
 URL = "https://pax.ulaval.ca/quixo/api/a24/"
 
 
 def initialiser_partie(idul, secret):
-    """Initialiser une partie
+    try:
+        response = requests.post(
+            f"{URL}partie/",
+            auth=(idul, secret)
+        )
 
-    Args:
-        idul (str): idul du joueur
-        secret (str): secret récupérer depuis le site de PAX
-
-    Raises:
-        PermissionError: Erreur levée lorsque le serveur retourne un code 401.
-        RuntimeError: Erreur levée lorsque le serveur retourne un code 406.
-        ConnectionError: Erreur levée lorsque le serveur retourne un code autre que 200, 401 ou 406
-
-    Returns:
-        tuple: Tuple de 3 éléments constitué de l'identifiant de la partie en cours,
-            de la liste des joueurs et de l'état du plateau.
-    """
-    pass
+        if response.status_code == 200:
+            data = response.json()
+            # Accéder aux données à l'intérieur de la clé 'état'
+            return data['id'], data['état']['joueurs'], data['état']['plateau']
+        
+        elif response.status_code == 401:
+            message = response.json().get('message', 'Erreur 401')
+            raise PermissionError(message)
+        
+        elif response.status_code == 406:
+            message = response.json().get('message', 'Erreur 406')
+            raise RuntimeError(message)
+        
+        else:
+            raise ConnectionError()
+    
+    except requests.RequestException as e:
+        raise ConnectionError(f"Erreur lors de la connexion: {e}")
 
 
 def jouer_un_coup(id_partie, origine, direction, idul, secret):
-    """Jouer un coup
+    try:
+        response = requests.put(
+            f"{URL}partie/{id_partie}/",
+            auth=(idul, secret),
+            json={
+                "origine": origine,
+                "direction": direction
+            }
+        )
 
-    Args:
-        id_partie (str): Identifiant de la partie.
-        origine (list): La position [x, y] du bloc à déplacer.
-        direction (str): La direction du déplacement du bloc.:
-            'haut': Déplacement d'un bloc du bas pour l'insérer en haut.
-            'bas': Déplacement d'un bloc du haut pour l'insérer en bas.
-            'gauche': Déplacement d'un bloc de droite pour l'insérer à gauche,
-            'droite': Déplacement d'un bloc de gauche pour l'insérer à droite,
-        idul (str): idul du joueur
-        secret (str): secret récupérer depuis le site de PAX
+        if response.status_code == 200:
+            data = response.json()
 
-    Raises:
-        StopIteration: Erreur levée lorsqu'il y a un gagnant dans la réponse du serveur.
-        PermissionError: Erreur levée lorsque le serveur retourne un code 401.
-        RuntimeError: Erreur levée lorsque le serveur retourne un code 406.
-        ConnectionError: Erreur levée lorsque le serveur retourne un code autre que 200, 401 ou 406
+            # Vérifie si un gagnant est présent et le renvoie
+            if data.get('gagnant'):
+                return data['gagnant']  # Retourne le nom du gagnant
 
-    Returns:
-        tuple: Tuple de 3 éléments constitué de l'identifiant de la partie en cours,
-            de la liste des joueurs et de l'état du plateau.
-    """
-    pass
+            # Retourne l'état mis à jour du jeu
+            # Utilise la structure correcte pour accéder aux données du plateau et des joueurs
+            return data['id'], data['état']['joueurs'], data['état']['plateau']
+        
+        elif response.status_code == 401:
+            message = response.json().get('message', 'Erreur 401')
+            raise PermissionError(message)
+        
+        elif response.status_code == 406:
+            message = response.json().get('message', 'Erreur 406')
+            raise RuntimeError(message)
+        
+        else:
+            raise ConnectionError(f"Erreur de connexion: {response.status_code}")
+    
+    except requests.RequestException as e:
+        raise ConnectionError(f"Erreur lors de la connexion: {e}")
 
 
 def récupérer_une_partie(id_partie, idul, secret):
-    """Récupérer une partie
+    url = f"{URL}partie/{id_partie}/"
+    
+    # Définir l'en-tête pour l'authentification
+    headers = {"Authorization": f"Bearer {secret}"}
 
-    Args:
-        id_partie (str): identifiant de la partie à récupérer
-        idul (str): idul du joueur
-        secret (str): secret récupérer depuis le site de PAX
-
-    Raises:
-        PermissionError: Erreur levée lorsque le serveur retourne un code 401.
-        RuntimeError: Erreur levée lorsque le serveur retourne un code 406.
-        ConnectionError: Erreur levée lorsque le serveur retourne un code autre que 200, 401 ou 406
-
-    Returns:
-        tuple: Tuple de 4 éléments constitué de l'identifiant de la partie en cours,
-            de la liste des joueurs, de l'état du plateau et du vainqueur.
-    """
-    pass
+    try:
+        # Effectuer la requête GET
+        response = requests.get(url, headers=headers)
+        
+        # Gérer les codes de réponse HTTP
+        if response.status_code == 200:
+            # Si la requête a réussi, traiter la réponse JSON
+            data = response.json()
+            return (
+                data["id"],  # Identifiant de la partie
+                data["état"]["joueurs"],  # Liste des joueurs
+                data["état"]["plateau"],  # État du plateau
+                data["gagnant"],  # Gagnant ou None si pas encore de gagnant
+            )
+        elif response.status_code == 401:
+            # Si erreur de permission (401), lever une exception PermissionError
+            message = response.json().get("message", "Erreur non spécifiée.")
+            raise PermissionError(message)
+        else:
+            # Pour d'autres erreurs HTTP, lever une exception ConnectionError
+            raise ConnectionError()
+    
+    except requests.exceptions.RequestException as e:
+        # Si une exception se produit pendant la requête (timeouts, etc.)
+        raise ConnectionError from e
