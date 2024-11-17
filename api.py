@@ -1,10 +1,28 @@
 import requests
 
-
 URL = "https://pax.ulaval.ca/quixo/api/a24/"
 
+"""
+Module pour interagir avec l'API Quixo.
+
+Ce module contient des fonctions pour initialiser une partie, jouer un coup et récupérer une partie.
+"""
 
 def initialiser_partie(idul, secret):
+    """Initialise une nouvelle partie en envoyant une requête POST à l'API Quixo.
+
+    Args:
+        idul (str): L'identifiant de l'utilisateur.
+        secret (str): Le secret pour l'authentification.
+
+    Returns:
+        tuple: Un tuple contenant l'id de la partie, les joueurs et l'état du plateau.
+
+    Raises:
+        PermissionError: Si l'authentification échoue (code 401).
+        RuntimeError: Si le serveur renvoie une erreur 406.
+        ConnectionError: Si la connexion échoue.
+    """
     try:
         response = requests.post(
             f"{URL}partie/",
@@ -15,22 +33,39 @@ def initialiser_partie(idul, secret):
             data = response.json()
             return data['id'], data['état']['joueurs'], data['état']['plateau']
         
-        elif response.status_code == 401:
+        if response.status_code == 401:
             message = response.json().get('message', 'Erreur 401')
             raise PermissionError(message)
         
-        elif response.status_code == 406:
+        if response.status_code == 406:
             message = response.json().get('message', 'Erreur 406')
             raise RuntimeError(message)
         
-        else:
-            raise ConnectionError()
+        raise ConnectionError()
     
     except requests.RequestException as e:
         raise ConnectionError(f"Erreur lors de la connexion: {e}")
 
 
 def jouer_un_coup(id_partie, origine, direction, idul, secret):
+    """Joue un coup dans une partie existante.
+
+    Args:
+        id_partie (str): L'identifiant de la partie.
+        origine (tuple): Les coordonnées de l'origine du coup.
+        direction (str): La direction du coup (haut, bas, gauche, droite).
+        idul (str): L'identifiant de l'utilisateur.
+        secret (str): Le secret pour l'authentification.
+
+    Returns:
+        tuple: Un tuple contenant l'id de la partie, les joueurs et l'état du plateau, 
+               ou un identifiant du gagnant si un gagnant est trouvé.
+
+    Raises:
+        PermissionError: Si l'authentification échoue (code 401).
+        RuntimeError: Si le serveur renvoie une erreur 406.
+        ConnectionError: Si la connexion échoue.
+    """
     try:
         response = requests.put(
             f"{URL}partie/{id_partie}/",
@@ -49,22 +84,34 @@ def jouer_un_coup(id_partie, origine, direction, idul, secret):
 
             return data['id'], data['état']['joueurs'], data['état']['plateau']
         
-        elif response.status_code == 401:
+        if response.status_code == 401:
             message = response.json().get('message', 'Erreur 401')
             raise PermissionError(message)
         
-        elif response.status_code == 406:
+        if response.status_code == 406:
             message = response.json().get('message', 'Erreur 406')
             raise RuntimeError(message)
         
-        else:
-            raise ConnectionError(f"Erreur de connexion: {response.status_code}")
+        raise ConnectionError(f"Erreur de connexion: {response.status_code}")
     
     except requests.RequestException as e:
         raise ConnectionError(f"Erreur lors de la connexion: {e}")
 
 
-def récupérer_une_partie(id_partie, idul, secret):
+def récupérer_une_partie(id_partie, secret):
+    """Récupère les informations d'une partie en cours.
+
+    Args:
+        id_partie (str): L'identifiant de la partie.
+        secret (str): Le secret pour l'authentification.
+
+    Returns:
+        tuple: Un tuple contenant l'id de la partie, les joueurs, l'état du plateau et le gagnant.
+
+    Raises:
+        PermissionError: Si l'authentification échoue (code 401).
+        ConnectionError: Si la connexion échoue.
+    """
     url = f"{URL}partie/{id_partie}/"
 
     headers = {"Authorization": f"Bearer {secret}"}
@@ -80,11 +127,12 @@ def récupérer_une_partie(id_partie, idul, secret):
                 data["état"]["plateau"],
                 data["gagnant"],
             )
-        elif response.status_code == 401:
+        
+        if response.status_code == 401:
             message = response.json().get("message", "Erreur non spécifiée.")
             raise PermissionError(message)
-        else:
-            raise ConnectionError()
+        
+        raise ConnectionError()
     
     except requests.exceptions.RequestException as e:
-        raise ConnectionError from e
+        raise ConnectionError(f"Erreur lors de la connexion: {e}") from e
