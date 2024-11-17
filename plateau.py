@@ -34,108 +34,114 @@ class Plateau:
         return deepcopy(self.plateau)
 
     def __str__(self):
-        
+        lignes = []
+        lignes.append("   -------------------")
 
+        for i in range(5):
+            ligne = f"{i + 1} | " + " | ".join(self.plateau[i]) + " |"
+            lignes.append(ligne)
+
+            if i < 4:
+                lignes.append("  |---|---|---|---|---|")
+
+        lignes.append("   -------------------")
+        lignes.append("    1   2   3   4   5   ")
+
+        return "\n".join(lignes)
+    
 
     def __getitem__(self, position):
-        """Retourne la valeur à la position donnée
+        x, y = position
 
-        Args:
-            position (tuple[int, int]): La position (x, y) du cube sur le plateau.
+        if not (1 <= x <= 5 and 1 <= y <= 5):
+            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Returns:
-            str: La valeur à la position donnée, soit "X", "O" ou " ".
+        return self.plateau[x - 1][y - 1]
 
-        Raises:
-            QuixoError: Les positions x et y doivent être entre 1 et 5 inclusivement.
-        """
-        pass
 
     def __setitem__(self, position, valeur):
-        """Modifie la valeur à la position donnée
+        x, y = position
 
-        Args:
-            position (tuple[int, int]): La position (x, y) du cube sur le plateau.
-            value (str): La valeur à insérer à la position donnée, soit "X", "O" ou " ".
+        if not (1 <= x <= 5 and 1 <= y <= 5):
+            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Raises:
-            QuixoError: Les positions x et y doivent être entre 1 et 5 inclusivement.
-            QuixoError: Valeur du cube invalide.
-        """
-        pass
+        if valeur not in ["X", "O", " "]:
+            raise QuixoError("Valeur du cube invalide.")
+
+        self.plateau[x - 1][y - 1] = valeur
+
 
     def générer_le_plateau(self, plateau):
-        """Génère un plateau de jeu
+        if plateau is None:
+            return [[" " for _ in range(5)] for _ in range(5)]
 
-        Si un plateau est fourni, il est retourné tel quel.
-        Sinon, si la valeur est None, un plateau vide de 5x5 est retourné.
+        if len(plateau) != 5 or any(len(ligne) != 5 for ligne in plateau):
+            raise QuixoError("Format du plateau invalide.")
 
-        Args:
-            plateau (list[list[str]] | None): La représentation du plateau
-                tel que retourné par le serveur de jeu ou la valeur None.
+        for ligne in plateau:
+            for valeur in ligne:
+                if valeur not in ["X", "O", " "]:
+                    raise QuixoError("Valeur du cube invalide.")
 
-        Returns:
-            list[list[str]]: La représentation du plateau
-                tel que retourné par le serveur de jeu.
+        return plateau
 
-        Raises:
-            QuixoError: Format du plateau invalide.
-            QuixoError: Valeur du cube invalide.
-        """
-        pass
 
     def insérer_un_cube(self, cube, origine, direction):
-        """Insère un cube dans le plateau
+        if cube not in ["X", "O"]:
+            raise QuixoError("Le cube à insérer ne peut pas être vide.")
 
-        Cette méthode appelle la méthode d'insertion appropriée selon la direction donnée.
+        if direction not in ["haut", "bas", "gauche", "droite"]:
+            raise QuixoError("La direction doit être 'haut', 'bas', 'gauche' ou 'droite'.")
 
-        À noter que la validation des positions sont faites dans
-        les méthodes __setitem__ et __getitem__. Vous devez donc en faire usage dans
-        les diverses méthodes d'insertion pour vous assurez que les positions sont valides.
+        if direction == "bas":
+            self.insérer_par_le_bas(cube, origine)
+        elif direction == "haut":
+            self.insérer_par_le_haut(cube, origine)
+        elif direction == "gauche":
+            self.insérer_par_la_gauche(cube, origine)
+        elif direction == "droite":
+            self.insérer_par_la_droite(cube, origine)
 
-        Args:
-            cube (str): La valeur du cube à insérer, soit "X" ou "O".
-            origine (list[int]): La position [x, y] d'origine du cube à insérer.
-            direction (str): La direction de l'insertion, soit "haut", "bas", "gauche" ou "droite".
-
-        Raises:
-            QuixoError: La direction doit être "haut", "bas", "gauche" ou "droite".
-            QuixoError: Le cube à insérer ne peut pas être vide.
-        """
-        pass
 
     def insérer_par_le_bas(self, cube, origine):
-        """Insère un cube dans le plateau en direction du bas
+        x, y = origine
+        if x < 1 or x > 5 or y < 1 or y > 5:
+            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Args:
-            cube (str): La valeur du cube à insérer, soit "X" ou "O".
-            origine (list[int]): La position [x, y] d'origine du cube à insérer.
-        """
-        pass
+        for i in range(4, 0, -1):
+            self[x - 1, i] = self[x - 1, i - 1]
+
+        self[x - 1, 0] = cube
+
 
     def insérer_par_le_haut(self, cube, origine):
-        """Insère un cube dans le plateau en direction du haut
+        x, y = origine
+        if x < 1 or x > 5 or y < 1 or y > 5:
+            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Args:
-            cube (str): La valeur du cube à insérer, soit "X" ou "O".
-            origine (list[int]): La position [x, y] d'origine du cube à insérer.
-        """
-        pass
+        for i in range(1, 5):
+            self[x - 1, i - 1] = self[x - 1, i]
+
+        self[x - 1, 4] = cube
+
 
     def insérer_par_la_gauche(self, cube, origine):
-        """Insère un cube dans le plateau en direction de la gauche
+        x, y = origine
+        if x < 1 or x > 5 or y < 1 or y > 5:
+            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Args:
-            cube (str): La valeur du cube à insérer, soit "X" ou "O".
-            origine (list[int]): La position [x, y] d'origine du cube à insérer.
-        """
-        pass
+        for i in range(1, 5):
+            self[i - 1, y - 1] = self[i, y - 1]
+
+        self[4, y - 1] = cube
+
 
     def insérer_par_la_droite(self, cube, origine):
-        """Insère un cube dans le plateau en direction de la droite
+        x, y = origine
+        if x < 1 or x > 5 or y < 1 or y > 5:
+            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Args:
-            cube (str): La valeur du cube à insérer, soit "X" ou "O".
-            origine (list[int]): La position [x, y] d'origine du cube à insérer.
-        """
-        pass
+        for i in range(4, 0, -1):
+            self[i, y - 1] = self[i - 1, y - 1]
+
+        self[0, y - 1] = cube
