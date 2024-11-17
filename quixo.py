@@ -137,8 +137,10 @@ class Quixo:
 
             except ValueError:
                 print(
-                    "Erreur : veuillez entrer des coordonnées valides au format x,y (par exemple, 2,3)."
+                    "Erreur : veuillez entrer des coordonnées valides au format x,y "
+                    "(par exemple, 2,3)."
                 )
+
             except QuixoError as e:
                 print(e)
 
