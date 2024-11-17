@@ -2,7 +2,8 @@
 Module pour interagir avec l'API Quixo.
 
 Ce module contient des fonctions permettant d'interagir avec l'API de jeu Quixo. 
-Les fonctions incluent l'initialisation d'une partie, le jeu d'un coup, et la récupération des informations d'une partie.
+Les fonctions incluent l'initialisation d'une partie, le jeu d'un coup, et 
+la récupération des informations d'une partie.
 """
 
 import requests

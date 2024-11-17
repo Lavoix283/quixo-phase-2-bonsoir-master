@@ -14,6 +14,7 @@ class QuixoError(Exception):
         """Initialise l'erreur avec un message spécifique.
 
         Args:
-            message (str, optional): Le message d'erreur à afficher. Par défaut, un message générique est utilisé.
+            message (str, optional): Le message d'erreur à afficher. 
+            Par défaut, un message générique est utilisé.
         """
         super().__init__(message)

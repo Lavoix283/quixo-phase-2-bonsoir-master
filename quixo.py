@@ -51,7 +51,8 @@ class Quixo:
     def __str__(self):
         """Renvoie une représentation sous forme de chaîne de caractères du jeu.
 
-        Retourne l'état actuel du jeu sous forme lisible avec la légende des joueurs et l'état du plateau.
+        Retourne l'état actuel du jeu sous forme lisible avec 
+        la légende des joueurs et l'état du plateau.
         """
         joueur_x, joueur_o = self.joueurs
         legende = f"Légende:\n   X={joueur_x}\n   O={joueur_o}"
@@ -80,7 +81,8 @@ class Quixo:
             direction (str): La direction du déplacement ('haut', 'bas', 'gauche', 'droite').
 
         Raises:
-            QuixoError: Si le pion ou la direction est invalide ou si la position est hors du plateau.
+            QuixoError: Si le pion ou la direction est invalide ou 
+            si la position est hors du plateau.
         """
         if pion not in ["X", "O"]:
             raise QuixoError(f"Le pion '{pion}' n'est pas valide. Il doit être 'X' ou 'O'.")
