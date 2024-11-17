@@ -81,18 +81,24 @@ class Quixo:
             direction (str): La direction du déplacement ('haut', 'bas', 'gauche', 'droite').
 
         Raises:
-            QuixoError: Si le pion ou la direction est invalide ou 
+         QuixoError: Si le pion ou la direction est invalide ou 
             si la position est hors du plateau.
         """
         if pion not in ["X", "O"]:
-            raise QuixoError(f"Le pion '{pion}' n'est pas valide. Il doit être 'X' ou 'O'.")
+            raise QuixoError(
+                f"Le pion '{pion}' n'est pas valide. Il doit être 'X' ou 'O'."
+            )
 
         x, y = origine
         if not (1 <= x <= 5 and 1 <= y <= 5):
-            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
+            raise QuixoError(
+                "Les positions x et y doivent être entre 1 et 5 inclusivement."
+            )
 
         if direction not in ["haut", "bas", "gauche", "droite"]:
-            raise QuixoError("La direction doit être 'haut', 'bas', 'gauche' ou 'droite'.")
+            raise QuixoError(
+                "La direction doit être 'haut', 'bas', 'gauche' ou 'droite'."
+            )
 
         self.plateau.insérer_un_cube(pion, origine, direction)
 
@@ -114,19 +120,25 @@ class Quixo:
                 origine = [int(coord) for coord in position_str.split(",")]
 
                 if not (1 <= origine[0] <= 5 and 1 <= origine[1] <= 5):
-                    raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
+                    raise QuixoError(
+                        "Les positions x et y doivent être entre 1 et 5 inclusivement."
+                    )
 
                 direction = input(
                     "Quelle direction voulez-vous insérer? ('haut', 'bas', 'gauche', 'droite') : "
                 ).lower()
 
                 if direction not in ["haut", "bas", "gauche", "droite"]:
-                    raise QuixoError("La direction doit être 'haut', 'bas', 'gauche' ou 'droite'.")
+                    raise QuixoError(
+                        "La direction doit être 'haut', 'bas', 'gauche' ou 'droite'."
+                    )
 
                 return origine, direction
 
             except ValueError:
-                print("Erreur : veuillez entrer des coordonnées valides au format x,y (par exemple, 2,3).")
+                print(
+                    "Erreur : veuillez entrer des coordonnées valides au format x,y (par exemple, 2,3)."
+                )
             except QuixoError as e:
                 print(e)
 
