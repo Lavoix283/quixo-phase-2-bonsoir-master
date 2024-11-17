@@ -45,61 +45,66 @@ class Quixo:
         }
 
     def __str__(self):
-        """Retourne une représentation en chaîne de caractères de la partie
+        joueur_X, joueur_O = self.joueurs
+        legende = f"Légende:\n   X={joueur_X}\n   O={joueur_O}"
 
-        Déplacer le code de vos fonctions formater_légende et formater_jeu ici.
-        Adaptez votre code en conséquence et faites appel à Plateau
-        pour obtenir la représentation du plateau.
+        lignes = []
+        lignes.append("   -------------------")
 
-        Returns:
-            str: Une représentation en chaîne de caractères du plateau.
-        """
-        pass
+        for i in range(5):
+            ligne = f"{i + 1} | " + " | ".join(self.plateau[i]) + " |"
+            lignes.append(ligne)
+
+            if i < 4:
+                lignes.append("  |---|---|---|---|---|")
+
+        lignes.append("   -------------------")
+        lignes.append("    1   2   3   4   5   ")
+
+        return f"{legende}\n{''.join(lignes)}"
+
 
     def déplacer_pion(self, pion, origine, direction):
-        """Déplacer un pion dans une direction donnée.
+        if pion not in ["X", "O"]:
+            raise QuixoError(f"Le pion '{pion}' n'est pas valide. Il doit être 'X' ou 'O'.")
 
-        Applique le changement au Plateau de jeu
+        x, y = origine
+        if not (1 <= x <= 5 and 1 <= y <= 5):
+            raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Args:
-            pion (str): Le pion à déplacer, soit "X" ou "O".
-            origine (list[int]): La position (x, y) du pion sur le plateau.
-            direction (str): La direction du déplacement, soit "haut", "bas", "gauche" ou "droite".
-        """
-        pass
+        if direction not in ["haut", "bas", "gauche", "droite"]:
+            raise QuixoError("La direction doit être 'haut', 'bas', 'gauche' ou 'droite'.")
 
-    def choisir_un_coup(self):
-        """Demander le prochain coup à jouer au joueur.
+        self.plateau.insérer_un_cube(pion, origine, direction)
 
-        Déplacer le code de votre fonction récupérer_le_coup ici et ajuster le en conséquence.
-        Vous devez maintenant valider les entrées de l'utilisateur.
 
-        Returns:
-            tuple: Tuple de 2 éléments composé de l'origine du bloc à déplacer et de sa direction.
-                L'origine est une liste de 2 entiers [x, y].
-                La direction est une chaîne de caractères.
+    def choisir_un_coup():
+        while True:
+            try:
+                position_str = input("Donnez la position d'origine du cube (x,y) : ")
+                origine = [int(coord) for coord in position_str.split(",")]
 
-        Raises:
-            QuixoError: Les positions x et y doivent être entre 1 et 5 inclusivement.
-            QuixoError: La direction doit être "haut", "bas", "gauche" ou "droite".
+                if not (1 <= origine[0] <= 5 and 1 <= origine[1] <= 5):
+                    raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-        Examples:
-            Donnez la position d'origine du bloc (x,y) :
-            Quelle direction voulez-vous insérer? ('haut', 'bas', 'gauche', 'droite') :
-        """
-        pass
+                direction = input("Quelle direction voulez-vous insérer? ('haut', 'bas', 'gauche', 'droite') : ").lower()
+
+                if direction not in ["haut", "bas", "gauche", "droite"]:
+                    raise QuixoError("La direction doit être 'haut', 'bas', 'gauche' ou 'droite'.")
+
+                return origine, direction
+        
+            except ValueError:
+                print("Erreur : veuillez entrer des coordonnées valides au format x,y (par exemple, 2,3).")
+            except QuixoError as e:
+                print(e)
 
 
 def interpréter_la_commande():
-    """Génère un interpréteur de commande.
-    Returns:
-        Namespace: Un objet Namespace tel que retourné par parser.parse_args().
-            Cet objet aura l'attribut «idul» représentant l'idul du joueur
-            et l'attribut «parties» qui est un booléen True/False.
-    """
     parser = argparse.ArgumentParser()
 
-    # Complétez le code ici
-    # vous pourriez aussi avoir à ajouter des arguments dans ArgumentParser(...)
+    parser.add_argument('idul', type=str, help="L'idul du joueur")
+
+    parser.add_argument('--parties', action='store_true', help="Indique si on doit afficher les parties en cours")
 
     return parser.parse_args()
