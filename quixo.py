@@ -9,7 +9,6 @@ Functions:
 """
 
 import argparse
-
 from quixo_error import QuixoError
 from plateau import Plateau
 
@@ -115,13 +114,15 @@ class Quixo:
                 if not (1 <= origine[0] <= 5 and 1 <= origine[1] <= 5):
                     raise QuixoError("Les positions x et y doivent être entre 1 et 5 inclusivement.")
 
-                direction = input("Quelle direction voulez-vous insérer? ('haut', 'bas', 'gauche', 'droite') : ").lower()
+                direction = input(
+                    "Quelle direction voulez-vous insérer? ('haut', 'bas', 'gauche', 'droite') : "
+                ).lower()
 
                 if direction not in ["haut", "bas", "gauche", "droite"]:
                     raise QuixoError("La direction doit être 'haut', 'bas', 'gauche' ou 'droite'.")
 
                 return origine, direction
-        
+
             except ValueError:
                 print("Erreur : veuillez entrer des coordonnées valides au format x,y (par exemple, 2,3).")
             except QuixoError as e:
@@ -136,7 +137,11 @@ def interpréter_la_commande():
     """
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('idul', type=str, help="L'idul du joueur")
-    parser.add_argument('--parties', action='store_true', help="Indique si on doit afficher les parties en cours")
+    parser.add_argument(
+        'idul', type=str, help="L'idul du joueur"
+    )
+    parser.add_argument(
+        '--parties', action='store_true', help="Indique si on doit afficher les parties en cours"
+    )
 
     return parser.parse_args()

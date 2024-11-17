@@ -1,12 +1,13 @@
-import requests
-
-URL = "https://pax.ulaval.ca/quixo/api/a24/"
-
 """
 Module pour interagir avec l'API Quixo.
 
-Ce module contient des fonctions pour initialiser une partie, jouer un coup et récupérer une partie.
+Ce module contient des fonctions permettant d'interagir avec l'API de jeu Quixo. 
+Les fonctions incluent l'initialisation d'une partie, le jeu d'un coup, et la récupération des informations d'une partie.
 """
+
+import requests
+
+URL = "https://pax.ulaval.ca/quixo/api/a24/"
 
 def initialiser_partie(idul, secret):
     """Initialise une nouvelle partie en envoyant une requête POST à l'API Quixo.
@@ -32,19 +33,19 @@ def initialiser_partie(idul, secret):
         if response.status_code == 200:
             data = response.json()
             return data['id'], data['état']['joueurs'], data['état']['plateau']
-        
+
         if response.status_code == 401:
             message = response.json().get('message', 'Erreur 401')
             raise PermissionError(message)
-        
+
         if response.status_code == 406:
             message = response.json().get('message', 'Erreur 406')
             raise RuntimeError(message)
-        
+
         raise ConnectionError()
-    
+
     except requests.RequestException as e:
-        raise ConnectionError(f"Erreur lors de la connexion: {e}")
+        raise ConnectionError(f"Erreur lors de la connexion: {e}") from e
 
 
 def jouer_un_coup(id_partie, origine, direction, idul, secret):
@@ -83,19 +84,19 @@ def jouer_un_coup(id_partie, origine, direction, idul, secret):
                 return data['gagnant']
 
             return data['id'], data['état']['joueurs'], data['état']['plateau']
-        
+
         if response.status_code == 401:
             message = response.json().get('message', 'Erreur 401')
             raise PermissionError(message)
-        
+
         if response.status_code == 406:
             message = response.json().get('message', 'Erreur 406')
             raise RuntimeError(message)
-        
+
         raise ConnectionError(f"Erreur de connexion: {response.status_code}")
-    
+
     except requests.RequestException as e:
-        raise ConnectionError(f"Erreur lors de la connexion: {e}")
+        raise ConnectionError(f"Erreur lors de la connexion: {e}") from e
 
 
 def récupérer_une_partie(id_partie, secret):
@@ -127,12 +128,12 @@ def récupérer_une_partie(id_partie, secret):
                 data["état"]["plateau"],
                 data["gagnant"],
             )
-        
+
         if response.status_code == 401:
             message = response.json().get("message", "Erreur non spécifiée.")
             raise PermissionError(message)
-        
+
         raise ConnectionError()
-    
+
     except requests.exceptions.RequestException as e:
         raise ConnectionError(f"Erreur lors de la connexion: {e}") from e

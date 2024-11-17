@@ -12,7 +12,8 @@ class Plateau:
     """
     Classe représentant le plateau de jeu Quixo.
     
-    Elle permet de manipuler le plateau en insérant des cubes, récupérant l'état du plateau et vérifiant les positions des cubes.
+    Elle permet de manipuler le plateau en insérant des cubes, récupérant l'état du plateau 
+    et vérifiant les positions des cubes.
     """
 
     def __init__(self, plateau=None):
@@ -81,7 +82,8 @@ class Plateau:
             valeur (str): La nouvelle valeur à insérer.
 
         Raises:
-            QuixoError: Si les coordonnées sont en dehors de la plage valide ou la valeur est invalide.
+            QuixoError: Si les coordonnées sont en dehors de la plage valide 
+            ou la valeur est invalide.
         """
         x, y = position
 
